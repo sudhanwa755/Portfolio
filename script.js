@@ -169,6 +169,7 @@ const formBtn = document.querySelector("[data-form-btn]");
 
 // Only add event listeners if form exists
 if (form && formInputs.length > 0 && formBtn) {
+    // Validation Logic
     for (let i = 0; i < formInputs.length; i++) {
         formInputs[i].addEventListener("input", function () {
             if (form.checkValidity()) {
@@ -178,6 +179,45 @@ if (form && formInputs.length > 0 && formBtn) {
             }
         });
     }
+
+    // Async Submit Logic
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const submitBtnSpan = formBtn.querySelector('span'); // Target text inside button
+        const originalText = submitBtnSpan.innerText;
+
+        // Visual Feedback
+        submitBtnSpan.innerText = "Sending...";
+        formBtn.setAttribute("disabled", ""); // Disable to prevent double send
+
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Success! Your message has been sent.");
+                form.reset();
+                formBtn.setAttribute("disabled", ""); // Re-disable until typing
+            } else {
+                alert("Error: " + data.message);
+            }
+
+        } catch (error) {
+            console.error('Submission Error:', error);
+            alert("Something went wrong. Please try again.");
+        } finally {
+            submitBtnSpan.innerText = originalText;
+            // Only re-enable if form is valid (it won't be after reset due to required fields)
+            // But we already reset it, so button should stay disabled until input
+        }
+    });
 }
 
 
