@@ -19,31 +19,36 @@ const projectsData = [
     {
         title: "VoltNexus EBS",
         category: "Web Development",
-        imgSrc: "https://via.placeholder.com/400x300/1a1a1a/ffcc00?text=VoltNexus+EBS",
+        techStack: "Spring Boot + Supabase + JavaScript",
+        imgSrc: "./images/Voltnexus.png",
         link: "https://github.com/sudhanwa755/VoltNexus-EBS-"
     },
     {
         title: "SurveyBoard Advanced",
         category: "Web Development",
-        imgSrc: "https://via.placeholder.com/400x300/1a1a1a/ffcc00?text=SurveyBoard",
+        techStack: "PHP + MySQL",
+        imgSrc: "./images/surveyboard.png",
         link: "https://github.com/sudhanwa755/surveyboard_Advance_version"
     },
     {
         title: "WattWise Billing System",
         category: "Web Development",
-        imgSrc: "https://via.placeholder.com/400x300/1a1a1a/ffcc00?text=WattWise",
+        techStack: "Spring Boot + PostgreSQL (Supabase)",
+        imgSrc: "./images/Wattwise .png",
         link: "https://github.com/sudhanwa755/ElectricityBilling-Springboot-supabase"
     },
     {
         title: "Apple Stock Prediction",
         category: "AI/ML",
-        imgSrc: "https://via.placeholder.com/400x300/1a1a1a/ffcc00?text=Stock+Prediction",
+        techStack: "Python + Machine Learning",
+        imgSrc: "./images/apple stock.png",
         link: "https://github.com/sudhanwa755/google-colab-project-"
     },
     {
         title: "Biometric Attendance IoT",
         category: "System Applications",
-        imgSrc: "https://via.placeholder.com/400x300/1a1a1a/ffcc00?text=Biometric+System",
+        techStack: "IoT + HTML/CSS/JS + PHP + MySQL",
+        imgSrc: "./images/biometric.png",
         link: "https://github.com/HaridasKhambe/Biometric-Attendance-Management-System"
     }
 ];
@@ -54,6 +59,8 @@ const projectsData = [
 const projectListContainer = document.querySelector(".project-list");
 
 function renderProjects() {
+    if (!projectListContainer) return; // Exit if element doesn't exist
+
     projectListContainer.innerHTML = ""; // Clear existing
 
     projectsData.forEach(project => {
@@ -74,6 +81,7 @@ function renderProjects() {
           <img src="${project.imgSrc}" alt="${project.title}" loading="lazy">
         </figure>
         <h3 class="project-title">${project.title}</h3>
+        <p class="project-tech-stack">${project.techStack}</p>
         <p class="project-category">${project.category}</p>
       </a>
     `;
@@ -82,8 +90,10 @@ function renderProjects() {
     });
 }
 
-// Initial Render
-renderProjects();
+// Initial Render (only if container exists)
+if (projectListContainer) {
+    renderProjects();
+}
 
 
 // ---------------------------------------------------------
@@ -115,34 +125,38 @@ const filterFunc = function (selectedValue) {
     }
 }
 
-// Toggle Select Box
+// Toggle Select Box (only if it exists)
 if (select) {
     select.addEventListener("click", function () { elementToggleFunc(this); });
 }
 
-// Event Listeners for Select Items (Mobile)
-for (let i = 0; i < selectItems.length; i++) {
-    selectItems[i].addEventListener("click", function () {
-        let selectedValue = this.innerText.toLowerCase();
-        selectValue.innerText = this.innerText;
-        if (select) elementToggleFunc(select);
-        filterFunc(selectedValue);
-    });
+// Event Listeners for Select Items (Mobile) - only if they exist
+if (selectItems.length > 0) {
+    for (let i = 0; i < selectItems.length; i++) {
+        selectItems[i].addEventListener("click", function () {
+            let selectedValue = this.innerText.toLowerCase();
+            if (selectValue) selectValue.innerText = this.innerText;
+            if (select) elementToggleFunc(select);
+            filterFunc(selectedValue);
+        });
+    }
 }
 
-// Event Listeners for Filter Buttons (Desktop)
-let lastClickedBtn = filterBtn[0];
+// Event Listeners for Filter Buttons (Desktop) - only if they exist
+if (filterBtn.length > 0) {
+    let lastClickedBtn = filterBtn[0];
 
-for (let i = 0; i < filterBtn.length; i++) {
-    filterBtn[i].addEventListener("click", function () {
-        let selectedValue = this.innerText.toLowerCase();
-        selectValue.innerText = this.innerText; // Sync title for mobile view too
-        filterFunc(selectedValue);
+    for (let i = 0; i < filterBtn.length; i++) {
+        filterBtn[i].addEventListener("click", function () {
+            let selectedValue = this.innerText.toLowerCase();
+            if (selectValue) selectValue.innerText = this.innerText; // Sync title for mobile view too
+            filterFunc(selectedValue);
 
-        lastClickedBtn.classList.remove("active");
-        this.classList.add("active");
-        lastClickedBtn = this;
-    });
+            lastClickedBtn.classList.remove("active");
+            this.classList.add("active");
+            lastClickedBtn = this;
+        });
+    }
 }
 
 
@@ -153,14 +167,17 @@ const form = document.querySelector("[data-form]");
 const formInputs = document.querySelectorAll("[data-form-input]");
 const formBtn = document.querySelector("[data-form-btn]");
 
-for (let i = 0; i < formInputs.length; i++) {
-    formInputs[i].addEventListener("input", function () {
-        if (form.checkValidity()) {
-            formBtn.removeAttribute("disabled");
-        } else {
-            formBtn.setAttribute("disabled", "");
-        }
-    });
+// Only add event listeners if form exists
+if (form && formInputs.length > 0 && formBtn) {
+    for (let i = 0; i < formInputs.length; i++) {
+        formInputs[i].addEventListener("input", function () {
+            if (form.checkValidity()) {
+                formBtn.removeAttribute("disabled");
+            } else {
+                formBtn.setAttribute("disabled", "");
+            }
+        });
+    }
 }
 
 
@@ -196,26 +213,87 @@ const darkThemeIcon = "moon-outline";
 const lightThemeIcon = "sunny-outline";
 
 const setTheme = function (isLight) {
+    console.log('Setting theme to:', isLight ? 'light' : 'dark');
+
     if (isLight) {
         document.body.classList.add("light-theme");
-        if (themeBtnIcon) themeBtnIcon.setAttribute("name", darkThemeIcon);
+        if (themeBtnIcon) {
+            themeBtnIcon.setAttribute("name", darkThemeIcon);
+            console.log('Icon changed to:', darkThemeIcon);
+        }
         localStorage.setItem("theme", "light");
     } else {
         document.body.classList.remove("light-theme");
-        if (themeBtnIcon) themeBtnIcon.setAttribute("name", lightThemeIcon);
+        if (themeBtnIcon) {
+            themeBtnIcon.setAttribute("name", lightThemeIcon);
+            console.log('Icon changed to:', lightThemeIcon);
+        }
         localStorage.setItem("theme", "dark");
     }
 }
 
-if (localStorage.getItem("theme") === "light") {
-    setTheme(true);
-} else {
-    setTheme(false);
+// Wait for ionicons to load before initializing theme
+function initializeTheme() {
+    // Initialize theme from localStorage
+    const savedTheme = localStorage.getItem("theme");
+    console.log('Saved theme from localStorage:', savedTheme);
+
+    if (savedTheme === "light") {
+        setTheme(true);
+    } else {
+        setTheme(false);
+    }
 }
 
+// Check if ionicons is loaded, if not wait for it
+if (typeof customElements !== 'undefined' && customElements.get('ion-icon')) {
+    initializeTheme();
+} else {
+    // Wait for ionicons to be defined
+    window.addEventListener('load', initializeTheme);
+}
+
+// Theme toggle event listener
 if (themeBtn) {
+    console.log('Theme button found, attaching event listener');
     themeBtn.addEventListener("click", function () {
+        console.log('Theme button clicked');
         const isLightTheme = document.body.classList.contains("light-theme");
         setTheme(!isLightTheme);
+
+        // Add visual feedback animation
+        this.style.transform = 'scale(0.9)';
+        setTimeout(() => {
+            this.style.transform = '';
+        }, 150);
     });
+} else {
+    console.error('Theme button not found! Check if [data-theme-btn] exists in HTML');
+}
+
+
+// ---------------------------------------------------------
+//  AUTO-HIDE NAVBAR ON SCROLL (MOBILE)
+// ---------------------------------------------------------
+let scrollTimer;
+const navbar = document.querySelector('.navbar');
+
+if (navbar && window.innerWidth <= 580) {
+    // Hide navbar while scrolling
+    window.addEventListener('scroll', function () {
+        navbar.classList.add('hidden');
+        navbar.classList.remove('visible');
+
+        // Clear previous timer
+        clearTimeout(scrollTimer);
+
+        // Show navbar when scrolling stops (after 150ms)
+        scrollTimer = setTimeout(function () {
+            navbar.classList.remove('hidden');
+            navbar.classList.add('visible');
+        }, 150);
+    });
+
+    // Show navbar initially
+    navbar.classList.add('visible');
 }
